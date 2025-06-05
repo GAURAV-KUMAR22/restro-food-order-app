@@ -110,10 +110,7 @@ export const getAllSales = async (req, res) => {
 export const getBestSellingItems = async (req, res) => {
   const rowShopId = req.query?.shopId;
   const shopId = new mongoose.Types.ObjectId(rowShopId);
-  console.log(
-    "shopId,sdnd vn cx vcx v xc ",
-    new mongoose.Types.ObjectId(shopId)
-  );
+
   if (!shopId) {
     return res.status(400).json({ message: "Shop ID is required" });
   }
@@ -135,7 +132,7 @@ export const getBestSellingItems = async (req, res) => {
 
     const products = await Product.find({
       _id: { $in: productIds },
-      shopId: shopId, // ✅ filter to specific shop
+      shopId: shopId,
     }).populate("categoryId");
 
     return res.status(200).json({ content: products || [] });

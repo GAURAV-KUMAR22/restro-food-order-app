@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Cart from "../Model/Cart.model.js";
 import Order from "../Model/Order.model.js";
 import Product from "../Model/Product.model.js";
@@ -5,7 +6,6 @@ import Sales from "../Model/Sales.model.js";
 
 export const getAllOrders = async (req, res) => {
   const id = req.params.id || req.user._id.toString();
-  console.log("is", id);
   try {
     const orders = await Order.find({ shopId: id })
       .populate("userId")
@@ -20,29 +20,44 @@ export const getAllOrders = async (req, res) => {
 };
 
 export const activeOrders = async (req, res) => {
-  const id = req.user._id.toString();
   try {
+    const id = req.user?._id?.toString();
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "Unauthorized: shop ID not found." });
+    }
+
     const orders = await Order.find({
       status: { $in: ["pending", "processing"] },
       shopId: id,
     })
       .populate("userId")
       .populate("items.productId");
-    "pendinds processs", orders;
-    res.status(200).json({ content: orders });
+    console.log("orders", orders);
+    if (!orders) {
+      return res.status(400).json({ message: "Orders not found" });
+    }
+    console.log("Pending/Processing Orders: ", orders);
+
+    return res.status(200).json({ content: orders });
   } catch (error) {
-    res.status(500).json({ message: "Internal Server error", error });
+    console.error("Error in fetching active orders:", error);
+    return res.status(500).json({ message: "Internal Server Error", error });
   }
 };
-
 export const getTodayOrders = async (req, res) => {
-  const shopId = req.user?._id.toString();
-  console.log(shopId, "shijskjdnjdsnjds ");
+  const shopId = req.user?._id?.toString(); // Get shopId from logged-in user
+
+  if (!shopId) {
+    return res.status(400).json({ message: "Shop ID is required" });
+  }
+
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set to today's midnight (start of the day)
+  today.setHours(0, 0, 0, 0); // Start of today
 
   const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  tomorrow.setDate(today.getDate() + 1); // Start of next day
 
   try {
     const todayOrders = await Order.find({
@@ -50,12 +65,14 @@ export const getTodayOrders = async (req, res) => {
         $gte: today,
         $lt: tomorrow,
       },
-      shopId: shopId,
+      shopId: shopId, // ✅ Use as string directly, not ObjectId
     })
       .populate("userId")
       .populate("items.productId");
+
     res.status(200).json({ content: todayOrders });
   } catch (error) {
+    console.error("Error fetching today's orders:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };

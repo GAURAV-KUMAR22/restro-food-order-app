@@ -5,7 +5,7 @@ import Rating from "../Model/Ratings.model.js";
 
 export const getAllProducts = async (req, res) => {
   let adminId = req.query?.shopId || req.user?._id.toString();
-  console.log(adminId);
+  console.log("sjhsjabschdschdsb", adminId);
   try {
     const products = await Product.find({
       createdUser: `${adminId}`,

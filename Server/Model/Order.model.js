@@ -35,8 +35,9 @@ const orderSchema = mongoose.Schema({
   },
   table: Number,
   shopId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Admin",
+    required: true,
   },
   placedAt: {
     type: Date,
