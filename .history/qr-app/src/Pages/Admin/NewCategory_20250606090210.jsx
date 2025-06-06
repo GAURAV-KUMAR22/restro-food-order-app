@@ -86,23 +86,7 @@ export const NewCategory = () => {
             />
           </div>
 
-          <div className="flex flex-row items-center w-[85%] mx-auto sm:w-[26%] gap-4">
-            <div className="">
-              <label htmlFor="file-upload" className="cursor-pointer">
-                <div className="bg-gray-600 w-[50px] h-[50px] object-contain rounded-full items-center justify-center flex">
-                  {image ? (
-                    <img
-                      src={image}
-                      alt="file upload"
-                      className="w-[50px] h-[50px] object-contain rounded-full"
-                      style={{ objectFit: "cover" }}
-                    />
-                  ) : (
-                    <img src="/public/assets/Vector2.png" alt="file upload" />
-                  )}
-                </div>
-              </label>
-            </div>
+          <div className="flex flex-row mx-auto my-auto sm:flex-row gap-2">
             {picture && picture.name && (
               <>
                 <button
@@ -112,7 +96,7 @@ export const NewCategory = () => {
                   {picture && picture.name}
                 </button>
                 <button
-                  className="bg-gray-400 border rounded-md h-8 px-4"
+                  className="bg-gray-400 border rounded-md px-5"
                   onClick={() => setPicture(null)}
                   type="button"
                 >
@@ -136,11 +120,23 @@ export const NewCategory = () => {
           onClose={() => setShowImage(false)}
         />
       )}
-
       <form
         className="flex flex-col justify-center items-center w-full m-4"
         onSubmit={handleSubmit}
       >
+        <label htmlFor="file-upload" className="cursor-pointer">
+          <div className=" bg-gray-600 w-[50px] h-[50px] object-contain rounded-full items-center justify-center flex ">
+            {image ? (
+              <img
+                src={image}
+                alt="file upload"
+                className="w-[50px] h-[50px] object-contain rounded-full"
+              />
+            ) : (
+              <img src="/public/assets/Vector2.png" alt="file upload" />
+            )}
+          </div>
+        </label>
         <div className="w-[90%] max-w-md h-[90px] flex flex-col m-1 overflow-x-hidden">
           <label className="p-1">Category</label>
           <input

@@ -240,15 +240,13 @@ export const NewProduct = () => {
                   </p>
                 )}
               </div>
-              <div className="flex flex-row mx-auto my-auto sm:flex-row gap-2">
-                {picture && picture.name && (
-                  <button
-                    onClick={handlePreviewImage}
-                    className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden capitalize"
-                  >
-                    {picture && picture.name}
-                  </button>
-                )}
+              <div className="flex flex-col mx-auto my-auto sm:flex-row gap-2">
+                <button
+                  onClick={handlePreviewImage}
+                  className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md overflow-y-hidden"
+                >
+                  {picture && picture.name ? picture.name : "Uploaded Image"}
+                </button>
                 {picture && (
                   <button
                     className="bg-[#F9D718] p-1  flex font-light items-center justify-center text-center rounded-md  overflow-y-hidden"

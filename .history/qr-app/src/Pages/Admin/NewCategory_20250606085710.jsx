@@ -73,9 +73,22 @@ export const NewCategory = () => {
         </Link>
       </div>
 
-      <div className="flex  m-4 flex-col">
+      <div className="flex justify-between m-4 flex-col items-center">
         <div className="flex justify-start items-center">
           <div className="mr-5">
+            <label htmlFor="file-upload" className="cursor-pointer">
+              <div className=" bg-gray-600 w-[50px] h-[50px] object-contain rounded-full items-center justify-center flex ">
+                {image ? (
+                  <img
+                    src={image}
+                    alt="file upload"
+                    className="w-[50px] h-[50px] object-contain rounded-full"
+                  />
+                ) : (
+                  <img src="/public/assets/Vector2.png" alt="file upload" />
+                )}
+              </div>
+            </label>
             <input
               id="file-upload"
               type="file"
@@ -86,40 +99,22 @@ export const NewCategory = () => {
             />
           </div>
 
-          <div className="flex flex-row items-center w-[85%] mx-auto sm:w-[26%] gap-4">
-            <div className="">
-              <label htmlFor="file-upload" className="cursor-pointer">
-                <div className="bg-gray-600 w-[50px] h-[50px] object-contain rounded-full items-center justify-center flex">
-                  {image ? (
-                    <img
-                      src={image}
-                      alt="file upload"
-                      className="w-[50px] h-[50px] object-contain rounded-full"
-                      style={{ objectFit: "cover" }}
-                    />
-                  ) : (
-                    <img src="/public/assets/Vector2.png" alt="file upload" />
-                  )}
-                </div>
-              </label>
-            </div>
+          <div className="flex gap-4">
             {picture && picture.name && (
-              <>
-                <button
-                  onClick={handlePreviewImage}
-                  className="bg-[#F9D718] w-32 flex font-light items-center justify-center text-center rounded-md h-8 overflow-y-hidden"
-                >
-                  {picture && picture.name}
-                </button>
-                <button
-                  className="bg-gray-400 border rounded-md h-8 px-4"
-                  onClick={() => setPicture(null)}
-                  type="button"
-                >
-                  Delete
-                </button>
-              </>
+              <button
+                onClick={handlePreviewImage}
+                className="bg-[#F9D718] w-32 flex font-light items-center justify-center text-center rounded-md h-8 overflow-y-hidden"
+              >
+                {picture && picture.name}
+              </button>
             )}
+            <button
+              className="bg-gray-400 border rounded-md px-5"
+              onClick={() => setPicture(null)}
+              type="button"
+            >
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -136,7 +131,6 @@ export const NewCategory = () => {
           onClose={() => setShowImage(false)}
         />
       )}
-
       <form
         className="flex flex-col justify-center items-center w-full m-4"
         onSubmit={handleSubmit}

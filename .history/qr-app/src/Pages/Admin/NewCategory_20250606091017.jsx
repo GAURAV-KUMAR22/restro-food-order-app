@@ -86,7 +86,7 @@ export const NewCategory = () => {
             />
           </div>
 
-          <div className="flex flex-row items-center w-[85%] mx-auto sm:w-[26%] gap-4">
+          <div className="flex flex-row w-[75%] mx-auto sm:w-[26%] gap-4">
             <div className="">
               <label htmlFor="file-upload" className="cursor-pointer">
                 <div className="bg-gray-600 w-[50px] h-[50px] object-contain rounded-full items-center justify-center flex">
@@ -112,7 +112,7 @@ export const NewCategory = () => {
                   {picture && picture.name}
                 </button>
                 <button
-                  className="bg-gray-400 border rounded-md h-8 px-4"
+                  className="bg-gray-400 border rounded-md h-8"
                   onClick={() => setPicture(null)}
                   type="button"
                 >

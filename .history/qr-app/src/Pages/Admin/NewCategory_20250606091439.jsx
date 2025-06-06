@@ -164,7 +164,7 @@ export const NewCategory = () => {
         </div>
       </form>
 
-      <div className="flex justify-between w-[99%]  min-h-[48px] mt-28 fixed bottom-0 gap-3 ml-2 mr-2  ">
+      <div className="flex justify-between w-[98%]  min-h-[48px] mt-28 fixed bottom-0 gap-3 ml-2 mr-2  ">
         <button
           onClick={() => naviagate("/admin")}
           className="bg-[#F2EFE3] w-[50%] rounded-md min-w-[164px]"

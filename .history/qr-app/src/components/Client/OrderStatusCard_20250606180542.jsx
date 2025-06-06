@@ -128,7 +128,7 @@ export default function OrderStatusCard({ orderStatus, onClose }) {
         {/* Contact Support */}
         <Link
           to={`/shop/${shopId}/order-success`}
-          className="flex items-center gap-2 bg-yellow-200 text-blue-900 rounded-xl py-2 justify-center hover:bg-blue-200 transition mt-3"
+          className="flex items-center gap-2 bg-blue-100 text-blue-900 rounded-xl py-2 justify-center hover:bg-blue-200 transition mt-3"
         >
           <FaComments className="text-xl" />
           <span className="font-semibold">Order Details</span>

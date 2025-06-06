@@ -240,7 +240,7 @@ export const NewProduct = () => {
                   </p>
                 )}
               </div>
-              <div className="flex flex-row mx-auto my-auto sm:flex-row gap-2">
+              <div className="flex flex-col mx-auto my-auto sm:flex-row gap-2">
                 {picture && picture.name && (
                   <button
                     onClick={handlePreviewImage}

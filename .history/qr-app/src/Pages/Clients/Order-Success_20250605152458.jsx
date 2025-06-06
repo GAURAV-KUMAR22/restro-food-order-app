@@ -168,9 +168,6 @@ export const OrderSuccess = () => {
                   fullIcon={<i className="fa fa-star" />}
                   activeColor="#ffd700"
                 />
-                {error && error.retingValue && (
-                  <p className="text-red-600 text-xs">{error.retingValue}</p>
-                )}
               </div>
 
               <div className="flex flex-col gap-3">
@@ -181,9 +178,6 @@ export const OrderSuccess = () => {
                   className="border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-green-400"
                   onChange={(e) => setFeedBackInput(e.target.value)}
                 />
-                {error && error.feedBackInput && (
-                  <p className="text-red-600 text-xs">{error.feedBackInput}</p>
-                )}
                 <button
                   className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition duration-300"
                   onClick={handleFeedBack}
