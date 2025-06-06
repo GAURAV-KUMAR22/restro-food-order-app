@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   FaShoppingCart,
   FaBicycle,
@@ -13,7 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 export default function OrderStatusCard({ orderStatus, onClose }) {
   const [orderStatusNow, setOrderStatus] = useState(orderStatus.status); // initialize with current status
-  const { shopId } = useParams();
+
   useEffect(() => {
     function setStatus() {
       setOrderStatus(orderStatus.status);
@@ -127,8 +127,8 @@ export default function OrderStatusCard({ orderStatus, onClose }) {
 
         {/* Contact Support */}
         <Link
-          to={`/shop/${shopId}/order-success`}
-          className="flex items-center gap-2 bg-yellow-200 text-blue-900 rounded-xl py-2 justify-center hover:bg-blue-200 transition mt-3"
+          to={"/order-success"}
+          className="flex items-center gap-2 bg-blue-100 text-blue-900 rounded-xl py-2 justify-center hover:bg-blue-200 transition mt-3"
         >
           <FaComments className="text-xl" />
           <span className="font-semibold">Order Details</span>

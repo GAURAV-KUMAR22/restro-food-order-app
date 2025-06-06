@@ -74,7 +74,7 @@ export const OrderSuccess = () => {
       errors.feedBackInput = "feedBackInput is required";
     }
     setErrors(errors);
-    return Object.keys(errors).length === 0;
+    return Object.
   };
 
   async function handleFeedBack(newRating) {
@@ -83,23 +83,20 @@ export const OrderSuccess = () => {
         (order) => order.items?.map((item) => item.productId._id) || []
       ) || [];
 
-    const validate = await validation();
-    if (validate) {
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (!user?._id) throw new Error("User not logged in");
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user?._id) throw new Error("User not logged in");
 
-        const response = await publicAxios.post("/products/rating", {
-          productIds: productIdsMap,
-          userId: user._id,
-          rating: retingValue,
-          feedback: feedBackInput,
-        });
+      const response = await publicAxios.post("/products/rating", {
+        productIds: productIdsMap,
+        userId: user._id,
+        rating: retingValue,
+        feedback: feedBackInput,
+      });
 
-        setIsOpen(close);
-      } catch (error) {
-        console.error("Rating failed:", error);
-      }
+      setIsOpen(close);
+    } catch (error) {
+      console.error("Rating failed:", error);
     }
   }
 
@@ -168,9 +165,6 @@ export const OrderSuccess = () => {
                   fullIcon={<i className="fa fa-star" />}
                   activeColor="#ffd700"
                 />
-                {error && error.retingValue && (
-                  <p className="text-red-600 text-xs">{error.retingValue}</p>
-                )}
               </div>
 
               <div className="flex flex-col gap-3">
@@ -181,9 +175,6 @@ export const OrderSuccess = () => {
                   className="border border-gray-300 rounded-md p-2 resize-none focus:outline-none focus:ring-2 focus:ring-green-400"
                   onChange={(e) => setFeedBackInput(e.target.value)}
                 />
-                {error && error.feedBackInput && (
-                  <p className="text-red-600 text-xs">{error.feedBackInput}</p>
-                )}
                 <button
                   className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition duration-300"
                   onClick={handleFeedBack}
