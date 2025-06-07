@@ -83,7 +83,7 @@ export const CartPage = () => {
         <div className="capitalize ">
           <div className=" flex justify-between ">
             <div className="w-[100%] h-[58px] items-center flex justify-between">
-              <ReverseButton route={"/"} routeName={"Cart Page"} />
+              <ReverseButton route={"/"} routeName={"Add to cart"} />
               <Link
                 to={"/"}
                 className="sticky right-6 top-4 flex flex-row items-center justify-end "
