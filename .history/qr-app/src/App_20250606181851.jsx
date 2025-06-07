@@ -90,7 +90,7 @@ function App() {
         }
       >
         <Routes className="min-w-[375px] h-auto">
-          <Route index element={<ShopDetails />} />
+          <Route path="/shop" element={<ShopDetails />} />
           <Route path="/login" element={<Login />} />{" "}
           <Route path="/signup" element={<Signup />} />{" "}
           {/* Default for /shop/:shop */}

@@ -90,12 +90,13 @@ function App() {
         }
       >
         <Routes className="min-w-[375px] h-auto">
-          <Route index element={<ShopDetails />} />
+          <Route index path="/shop" element={<ShopDetails />} />
           <Route path="/login" element={<Login />} />{" "}
           <Route path="/signup" element={<Signup />} />{" "}
           {/* Default for /shop/:shop */}
           <Route path="/shop/:shopId">
-            <Route index element={<Home />} /> {/* Default for /shop/:shop */}
+            <Route path="/" element={<Home />} />{" "}
+            {/* Default for /shop/:shop */}
             <Route path="user-info" element={<UserInfo />} />
             <Route path="product/:id" element={<ProductsDetails />} />
             <Route path="cart" element={<CartPage />} />
