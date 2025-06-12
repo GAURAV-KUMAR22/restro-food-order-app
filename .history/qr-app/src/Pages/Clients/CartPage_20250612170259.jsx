@@ -33,9 +33,7 @@ export const CartPage = () => {
     socket.emit("join-admin");
     const fetchData = async () => {
       try {
-        const responce = await publicAxios.get("/products", {
-          params: { shopId: shopId },
-        });
+        const responce = await publicAxios.get("/products");
         if (responce.status !== 200) {
           throw new Error({ message: "responce failed" });
         }

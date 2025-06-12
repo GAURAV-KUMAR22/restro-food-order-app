@@ -14,9 +14,8 @@ import { TbCategoryPlus } from "react-icons/tb";
 import { MdAttachMoney } from "react-icons/md";
 import { useAuth } from "../../../Context/AuthProvider";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Menu } from "lucide-react";
-import { logout } from "../../Redux/Fetures/authSlice";
 
 export const DashBoardPage = () => {
   const [products, setProducts] = useState([]);
@@ -26,10 +25,9 @@ export const DashBoardPage = () => {
   const [todayOrders, setTodayOrders] = useState([]);
   const [SelingData, setSellingData] = useState([]);
   const navigate = useNavigate();
-  const [showMenu, setShowMenu] = useState(false);
-  const dispatch = useDispatch();
-  const toggleMenu = () => setShowMenu(!showMenu);
+
   const token = useSelector((state) => state.auth.token);
+  console.log("token in admin dash", token);
   useEffect(() => {
     if (!token) {
       toast.error("you are not Authentic");
@@ -181,26 +179,10 @@ export const DashBoardPage = () => {
         alt="logo"
         className="w-full object-cover max-h-[250px]"
       />
-      <div className="absolute left-0 top-2">
-        <button onClick={toggleMenu}>
+      <div className="absolute right-0 top-5">
+        <button>
           <Menu size={40} color="gray" />
         </button>
-        {showMenu && (
-          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-20 border">
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              // onClick={handleMangeAdmin}
-            >
-              Settings
-            </button>
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-red-100 text-red-600"
-              onClick={() => dispatch(logout())}
-            >
-              Logout
-            </button>
-          </div>
-        )}
       </div>
 
       <div className="w-[98%] grid grid-cols-2 md:grid-cols-4 md:justify-center sm:gap-6 mt-5 mb-4 mx-auto relative">

@@ -33,9 +33,7 @@ export const CartPage = () => {
     socket.emit("join-admin");
     const fetchData = async () => {
       try {
-        const responce = await publicAxios.get("/products", {
-          params: { shopId: shopId },
-        });
+        const responce = await publicAxios.get("/products");
         if (responce.status !== 200) {
           throw new Error({ message: "responce failed" });
         }
@@ -74,7 +72,7 @@ export const CartPage = () => {
   function handlePlusQuantity(id) {
     const cartProduct = cartstate.find((item) => item._id === id);
     const product = fetchedProduct.find((item) => item._id === cartProduct._id);
-    console.log(cartProduct, product);
+    console.log(cartProduct);
     if (cartProduct.quantity < product.quantity) {
       dispatch(incrementCart(id));
     }

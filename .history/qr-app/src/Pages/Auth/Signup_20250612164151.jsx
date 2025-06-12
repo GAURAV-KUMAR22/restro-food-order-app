@@ -198,6 +198,9 @@ export const Signup = () => {
               Login
             </Link>
           </p>
+          <p>
+            <Link to={"/signup/superadmin"}>SuperAdmin</Link>
+          </p>
         </form>
       </div>
     </div>
