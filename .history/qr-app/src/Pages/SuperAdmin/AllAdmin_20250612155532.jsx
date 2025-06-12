@@ -1,0 +1,65 @@
+import React from "react";
+import { useEffect } from "react";
+import PrivateAxios from "../../Services/PrivateAxios";
+import { useState } from "react";
+import { set } from "mongoose";
+
+export const AllAdmin = ({ item }) => {
+  const [admins, setAdmins] = useState([]);
+  async function handleAprovedAdmin(admin) {
+    const responce = await PrivateAxios.patch("/auth/update/admin", {
+      _id: admin._id,
+    });
+    console.log(responce);
+    if (responce.status === 200) {
+      alert("status updated");
+    }
+  }
+  useEffect(() => {
+    const fetched = async () => {
+      const responce = await PrivateAxios("/auth/admins");
+      if (responce.status === 200) {
+        console.log(responce.data.content);
+        setAdmins(responce.data.content);
+      }
+    };
+    fetched();
+  }, []);
+  return (
+    <div>
+      <div>
+        <h1 className="text-3xl text-gray-500 text-center font-bold mt-3">
+          All Admins
+        </h1>
+      </div>
+      <div className=" mt-3 px-3">
+        <table className="table-auto w-[100%] text-left border border-collapse border-gray-500">
+          <thead className="text-gray-600 text-sm border-b mx-2">
+            <tr>
+              <th className="pt-2 px-4">Sr.</th>
+              <th className="pt-2 px-4">Name</th>
+              <th className="pt-2 px-4">Email</th>
+              <th className="pt-2 px-4">Phone</th>
+              <th className="pt-2 px-4">Address</th>
+            </tr>
+          </thead>
+          <tbody className="text-sm">
+            {admins.map((item, index) => (
+              <tr key={index} className="border-t hover:bg-gray-50 ">
+                <td className="capitalize py-3 px-4 flex items-center space-x-2">
+                  {item._id}
+                </td>
+
+                <td className="capitalize">{item.name}</td>
+                <td>{item.email}</td>
+                <td>{item.phone}</td>
+                <td>{item.address}</td>
+                
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
