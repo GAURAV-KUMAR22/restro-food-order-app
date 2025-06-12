@@ -14,9 +14,8 @@ import { TbCategoryPlus } from "react-icons/tb";
 import { MdAttachMoney } from "react-icons/md";
 import { useAuth } from "../../../Context/AuthProvider";
 import toast from "react-hot-toast";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Menu } from "lucide-react";
-import { logout } from "../../Redux/Fetures/authSlice";
 
 export const DashBoardPage = () => {
   const [products, setProducts] = useState([]);
@@ -27,9 +26,11 @@ export const DashBoardPage = () => {
   const [SelingData, setSellingData] = useState([]);
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const dispatch = useDispatch();
+
   const toggleMenu = () => setShowMenu(!showMenu);
+
   const token = useSelector((state) => state.auth.token);
+  console.log("token in admin dash", token);
   useEffect(() => {
     if (!token) {
       toast.error("you are not Authentic");
@@ -186,16 +187,13 @@ export const DashBoardPage = () => {
           <Menu size={40} color="gray" />
         </button>
         {showMenu && (
-          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-20 border">
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              // onClick={handleMangeAdmin}
-            >
+          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-40 border">
+            <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
               Settings
             </button>
             <button
+              onClick={onLogout}
               className="block w-full text-left px-4 py-2 text-sm hover:bg-red-100 text-red-600"
-              onClick={() => dispatch(logout())}
             >
               Logout
             </button>

@@ -134,8 +134,8 @@ export const Login = () => {
               Signup
             </Link>{" "}
           </p>
-          <p className="text-center text-blue-400">
-            <Link to={"/signup/superadmin"}>SuperAdmin-Login</Link>
+          <p className="text-center">
+            <Link to={"/signup/superadmin"}>SuperAdmin</Link>
           </p>
         </form>
       </div>

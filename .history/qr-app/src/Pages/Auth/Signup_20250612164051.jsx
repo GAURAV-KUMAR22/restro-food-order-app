@@ -160,7 +160,6 @@ export const Signup = () => {
               ) : (
                 <UploadIcon size={25} />
               )}
-              <span className="ml-5 text-gray-500"> Upload image</span>
             </label>
 
             <input
@@ -170,6 +169,7 @@ export const Signup = () => {
               hidden
               onChange={handleImage}
               required
+              placeholder="Upload Image"
             />
           </div>
           <div className="flex flex-col">
@@ -197,6 +197,9 @@ export const Signup = () => {
             <Link className="text-blue-500 ml-1" to="/login">
               Login
             </Link>
+          </p>
+          <p>
+            <Link to={"/signup/superadmin"}>SuperAdmin</Link>
           </p>
         </form>
       </div>

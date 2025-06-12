@@ -187,10 +187,7 @@ export const DashBoardPage = () => {
         </button>
         {showMenu && (
           <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-20 border">
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-              // onClick={handleMangeAdmin}
-            >
+            <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
               Settings
             </button>
             <button
