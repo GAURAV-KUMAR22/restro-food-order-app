@@ -51,7 +51,7 @@ export const ShopDetails = () => {
               {selectedAdminId === admin._id && (
                 <div className="mt-4">
                   <QRCode
-                    value={`/${admin._id}`}
+                    value={`http://localhost:5173/${admin._id}`}
                     size={128}
                     bgColor="#ffffff"
                     fgColor="#000000"
