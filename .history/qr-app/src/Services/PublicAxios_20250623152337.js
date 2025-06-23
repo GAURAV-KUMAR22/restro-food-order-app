@@ -9,4 +9,5 @@ const publicAxios = axios.create({
     "Content-Type": "application/json",
   },
 });
+console.log(publicAxios.interceptors());
 export default publicAxios;
