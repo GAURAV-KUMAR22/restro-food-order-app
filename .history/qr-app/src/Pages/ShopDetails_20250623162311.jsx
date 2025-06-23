@@ -6,10 +6,7 @@ import { Link } from "react-router-dom";
 export const ShopDetails = () => {
   const [admins, setAdmins] = useState([]);
   const [selectedAdminId, setSelectedAdminId] = useState(null);
-  const backendUrl =
-    import.meta.env.VITE_MODE === "Production"
-      ? import.meta.env.VITE_FRONTEND_PROD
-      : import.meta.env.VITE_FRONTEND_DEV;
+  const backendUrl = import.meta.env.VITE_FRONTEND;
   useEffect(() => {
     async function fetchAdmins() {
       try {
