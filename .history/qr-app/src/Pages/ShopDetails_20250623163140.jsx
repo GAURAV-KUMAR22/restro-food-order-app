@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 export const ShopDetails = () => {
   const [admins, setAdmins] = useState([]);
   const [selectedAdminId, setSelectedAdminId] = useState(null);
-  const frontendUri =
+  const backendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_FRONTEND_PROD
       : import.meta.env.VITE_FRONTEND_DEV;
@@ -43,15 +43,15 @@ export const ShopDetails = () => {
                 {admin.name}
               </button>
               <Link
-                to={`${frontendUri}/shop/${admin._id}`}
+                to={`${backendUrl}/shop/${admin._id}`}
                 className="text-blue-600 underline"
               >
-                {`${frontendUri}/shop/${admin._id}`}
+                {`${backendUrl}/shop/${admin._id}`}
               </Link>
               {selectedAdminId === admin._id && (
                 <div className="mt-4">
                   <QRCode
-                    value={`${frontendUri}/${admin._id}`}
+                    value={`${backendUrl}/${admin._id}`}
                     size={128}
                     bgColor="#ffffff"
                     fgColor="#000000"
