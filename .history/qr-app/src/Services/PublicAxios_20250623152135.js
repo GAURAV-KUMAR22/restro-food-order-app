@@ -9,4 +9,5 @@ const publicAxios = axios.create({
     "Content-Type": "application/json",
   },
 });
+console.log(publicAxios.getUri());
 export default publicAxios;

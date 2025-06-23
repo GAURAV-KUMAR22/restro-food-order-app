@@ -7,11 +7,6 @@ export const ShopDetails = () => {
   const [admins, setAdmins] = useState([]);
   const [selectedAdminId, setSelectedAdminId] = useState(null);
 
-  const backendUrl =
-    import.meta.env.VITE_MODE === "Production"
-      ? import.meta.env.VITE_BACKEND_PROD
-      : import.meta.env.VITE_BACKEND_DEV;
-
   useEffect(() => {
     async function fetchAdmins() {
       try {
@@ -44,15 +39,15 @@ export const ShopDetails = () => {
                 {admin.name}
               </button>
               <Link
-                to={`${backendUrl}/shop/${admin._id}`}
+                to={`/shop/${admin._id}`}
                 className="text-blue-600 underline"
               >
-                {`${backendUrl}/shop/${admin._id}`}
+                {`http://localhost:5173/shop/${admin._id}`}
               </Link>
               {selectedAdminId === admin._id && (
                 <div className="mt-4">
                   <QRCode
-                    value={`${backendUrl}/${admin._id}`}
+                    value={`http://localhost:5173/${admin._id}`}
                     size={128}
                     bgColor="#ffffff"
                     fgColor="#000000"
