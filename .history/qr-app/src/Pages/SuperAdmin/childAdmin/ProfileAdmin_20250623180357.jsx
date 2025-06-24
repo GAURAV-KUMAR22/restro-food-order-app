@@ -1,0 +1,63 @@
+import React from "react";
+import image from "../../../../public/assets/image1.jpg";
+export const ProfileAdmin = () => {
+  return (
+    <div className="my-6 mx-2 ">
+      <header className="flex flex-col gap-4 sm:flex-row justify-between items-center">
+        <div className="flex gap-6">
+          <img
+            src={image}
+            alt="image"
+            className="w-[80px] h-[80px] rounded-full"
+          />
+          <div className="flex flex-col justify-center text-gray-500">
+            <h1>Gaurav kumar</h1>
+            <p>gorav.panwar@ggmail.com</p>
+          </div>
+        </div>
+        <div className="bg-gray-100 px-6 w-fit h-10">Show QR Code</div>
+        <div>
+          <button className="px-6 p-2 bg-blue-400 mr-10 rounded-xl">
+            Edit
+          </button>
+        </div>
+      </header>
+      <div className="">
+        <div className="flex flex-col gap-4 sm:flex-row my-2 w-full justify-between  ">
+          <div className="flex flex-col w-full">
+            <h2 className="flex pl-2 text-gray-500 mb-2">FullName</h2>
+            <p className=" w-full py-2 rounded-xl pl-4  bg-gray-100 text-gray-700">
+              Gaurav kumar
+            </p>
+          </div>
+          <div className="flex flex-col w-full">
+            <h2 className="flex      text-gray-500 mb-2">Email</h2>
+            <p className=" px-8 py-2 rounded-xl pl-4 bg-gray-100 text-gray-700">
+              Gaurav@test.com
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 sm:flex-row my-2 w-full justify-between ">
+          <div className="flex flex-col w-full">
+            <h2 className="flex pl-2 text-gray-500 mb-2">Phone</h2>
+            <p className=" w-full py-2 rounded-xl pl-4  bg-gray-100 text-gray-700">
+              +918077751497
+            </p>
+          </div>
+          <div className="flex flex-col w-full">
+            <h2 className="flex  text-gray-500 mb-2">Address</h2>
+            <p className=" w-full py-2 rounded-xl pl-4  bg-gray-100 text-gray-700">
+              Saharanpur naveen Nager
+            </p>
+          </div>
+        </div>
+        <div className=" text-gray-500 mb-2">
+          Created User{" "}
+          <p className="w-[48.5%] px-8 py-2 rounded-xl pl-4 bg-gray-100 text-gray-700">
+            15/15/2025
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};

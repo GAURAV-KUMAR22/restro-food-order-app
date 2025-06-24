@@ -1,0 +1,30 @@
+import React from "react";
+import image from "../../../../public/assets/image1.jpg";
+export const ProfileAdmin = () => {
+  return (
+    <div className="my-2 mx-2 border bg-gray-100">
+      <header className="flex justify-between items-center">
+        <div className="flex gap-6">
+          <img
+            src={image}
+            alt="image"
+            className="w-[80px] h-[80px] rounded-full"
+          />
+          <div className="flex flex-col justify-center">
+            <h1>Gaurav kumar</h1>
+            <p>gorav.panwar@ggmail.com</p>
+          </div>
+        </div>
+        <div>
+          <button className="px-4 p-2 bg-blue-400 mr-10">Edit</button>
+        </div>
+      </header>
+      <div>
+        <div className="flex">
+          <label htmlFor="fullName">FullName</label>
+          <h2>Gaurav kumar</h2>
+        </div>
+      </div>
+    </div>
+  );
+};
