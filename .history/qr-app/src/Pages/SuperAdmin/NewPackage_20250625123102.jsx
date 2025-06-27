@@ -1,0 +1,54 @@
+import React, { useState } from "react";
+
+export const NewPackage = () => {
+  const [form, setForm] = useState({
+    title: "",
+    price: "",
+    fetures: "",
+  });
+  function handleChange(e) {}
+  return (
+    <div>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full  bg-gray-200 flex flex-col justify-center items-center sm:w-[40%] sm:mx-auto shadow-2xl"
+      >
+        <div className="w-full flex flex-col  p-4 ">
+          <label htmlFor="title" className="text-xl font-medium my-2">
+            Title
+          </label>
+          <input
+            type="text"
+            name="title"
+            onClick={handleChange}
+            className="w-full p-2  bg-white "
+            placeholder="Enter Title"
+          />
+          <label htmlFor="title" className="text-xl font-medium my-2">
+            Title
+          </label>
+          <input
+            type="text"
+            name="title"
+            onClick={handleChange}
+            className="w-full p-2  bg-white "
+            placeholder="Enter Title"
+          />
+          <label htmlFor="title" className="text-xl font-medium my-2">
+            Title
+          </label>
+          <input
+            type="text"
+            name="title"
+            onClick={handleChange}
+            className="w-full p-2  bg-white mb-5 "
+            placeholder="Enter Title"
+          />
+          <button className="w-full p-2 bg-blue-500 text-white text-xl">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
