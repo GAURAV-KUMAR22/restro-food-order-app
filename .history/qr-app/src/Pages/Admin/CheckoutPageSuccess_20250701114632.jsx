@@ -64,7 +64,7 @@ export const CheckoutPageSuccess = () => {
           loginSuccess({
             ...auth,
             subscription: data.subscription,
-            isSubscribed: data.isSubscribe,
+            isSubscribed,
           })
         );
 

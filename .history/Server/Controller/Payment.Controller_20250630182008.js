@@ -12,20 +12,12 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-const backendUrl = process.env.FRONTEND_DEV;
+const backendUrl = process.env.frontendUrl
 
 // === Create Razorpay Order ===
 export const createOrder = async (req, res) => {
   try {
-    const {
-      amount,
-      currency = "INR",
-      receipt,
-      userId,
-      packageId,
-      startDate,
-      endDate,
-    } = req.body;
+    const { amount, currency = "INR", receipt, userId, packageId } = req.body;
 
     if (!amount || !userId || !packageId) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -40,20 +32,8 @@ export const createOrder = async (req, res) => {
         packageId,
       },
       handler: function (response) {
-        const startDate = new Date();
-        const endDate = new Date();
-        endDate.setDate(startDate.getDate() + pkg.durationInDays);
-
-        // ✅ Add required query params to redirect
-        const redirectUrl =
-          `${window.location.origin}/payment-success` +
-          `?payment_id=${response.razorpay_payment_id}` +
-          `&order_id=${response.razorpay_order_id}` +
-          `&signature=${response.razorpay_signature}` +
-          `&packageId=${pkg._id}` +
-          `&userId=${userId}` +
-          `&startDate=${startDate.toISOString()}` +
-          `&endDate=${endDate.toISOString()}`;
+        // ✅ redirect manually after success
+        window.location.href = `${}/payment-success?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}&signature=${response.razorpay_signature}&packageId=${packageId}`;
       },
     };
 
@@ -84,24 +64,7 @@ export const verifyPayment = async (req, res) => {
       endDate,
     } = req.body;
 
-    // Step 1: Check for missing fields
-    const missingFields = [];
-    if (!razorpay_order_id) missingFields.push("razorpay_order_id");
-    if (!razorpay_payment_id) missingFields.push("razorpay_payment_id");
-    // if (!razorpay_signature) missingFields.push("razorpay_signature");
-    if (!userId) missingFields.push("userId");
-    if (!packageId) missingFields.push("packageId");
-    if (!startDate) missingFields.push("startDate");
-    if (!endDate) missingFields.push("endDate");
-
-    if (missingFields.length > 0) {
-      return res.status(400).json({
-        message: "Missing required fields",
-        missingFields,
-      });
-    }
-
-    // Step 2: Verify Razorpay Signature
+    // Step 1: Verify Signature
     const signatureData = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -112,8 +75,8 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ message: "Invalid signature" });
     }
 
-    // Step 3: Save subscription
-    const newSubscription = new SubScription({
+    // Step 2: Save subscription in DB
+    const subscription = new SubScription({
       adminId: userId,
       packageId,
       startDate,
@@ -121,41 +84,25 @@ export const verifyPayment = async (req, res) => {
       paymentStatus: "paid",
     });
 
-    await newSubscription.save();
+    await subscription.save();
 
-    // Step 4: Update admin
-    const subscription = await Admin.findByIdAndUpdate(
-      userId,
-      {
-        subscription: {
-          plan: packageId,
-          subscribedAt: startDate,
-          expiresAt: endDate,
-        },
+    // Step 3: Update admin subscription
+    const subscribeData = await Admin.findByIdAndUpdate(userId, {
+      subscription: {
+        plan: packageId,
+        subscribedAt: startDate,
+        expiresAt: endDate,
       },
-      { new: true }
-    );
+    });
 
-    // ✅ Step 5: Redirect user to frontend payment-success page
-    const redirectUrl =
-      `http://localhost:5173/payment-success` +
-      `?payment_id=${razorpay_payment_id}` +
-      `&order_id=${razorpay_order_id}` +
-      `&signature=${razorpay_signature}` +
-      `&packageId=${packageId}` +
-      `&userId=${userId}` +
-      `&startDate=${startDate}` +
-      `&endDate=${endDate}`;
-
-    return res.status(200).json({
-      subscription: newSubscription,
-      isSubscribe: new Date(newSubscription.endDate) > new Date(),
+    res.status(200).json({
       message: "Payment verified and plan updated",
-      redirectUrl,
+      subscriptionId: subscription._id,
+      subscription: subscribeData,
     });
   } catch (error) {
     console.error("Payment verification error:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

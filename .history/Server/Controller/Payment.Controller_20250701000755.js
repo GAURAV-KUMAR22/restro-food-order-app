@@ -124,7 +124,7 @@ export const verifyPayment = async (req, res) => {
     await newSubscription.save();
 
     // Step 4: Update admin
-    const subscription = await Admin.findByIdAndUpdate(
+    await Admin.findByIdAndUpdate(
       userId,
       {
         subscription: {
@@ -141,15 +141,12 @@ export const verifyPayment = async (req, res) => {
       `http://localhost:5173/payment-success` +
       `?payment_id=${razorpay_payment_id}` +
       `&order_id=${razorpay_order_id}` +
-      `&signature=${razorpay_signature}` +
       `&packageId=${packageId}` +
       `&userId=${userId}` +
       `&startDate=${startDate}` +
       `&endDate=${endDate}`;
 
     return res.status(200).json({
-      subscription: newSubscription,
-      isSubscribe: new Date(newSubscription.endDate) > new Date(),
       message: "Payment verified and plan updated",
       redirectUrl,
     });

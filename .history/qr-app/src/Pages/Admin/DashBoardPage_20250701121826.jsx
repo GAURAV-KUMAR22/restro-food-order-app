@@ -258,7 +258,7 @@ export const DashBoardPage = () => {
 
   return (
     <div className="min-w-[375px] h-auto relative">
-      <div className="w-[98%] justify-center items-center grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
+      <div className="w-[98%] grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
         <StatCard
           name="Today Orders"
           value={todaysOrders}

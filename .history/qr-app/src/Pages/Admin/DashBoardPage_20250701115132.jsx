@@ -17,7 +17,6 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Edit2Icon, Menu } from "lucide-react";
 import { loginSuccess, logout } from "../../Redux/Fetures/authSlice";
-import { ImSpinner9 } from "react-icons/im";
 
 export const DashBoardPage = () => {
   const [products, setProducts] = useState([]);
@@ -28,7 +27,7 @@ export const DashBoardPage = () => {
   const [SelingData, setSellingData] = useState([]);
 
   const [coverImageModel, setCoverImageModel] = useState(false);
-  const [coverUpdatedImage, setUpdatedCoverImage] = useState(null); // ✅ FIXED
+  const [coverUpdatedImage, setUpdatedCoverImage] = useState(true);
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,12 +35,20 @@ export const DashBoardPage = () => {
   const toggleMenu = () => setShowMenu(!showMenu);
   const token = useSelector((state) => state.auth.token);
   const adminProfile = useSelector((state) => state.auth);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  console.log(uploadProgress);
+  console.log(adminProfile);
+
   const backendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center">
+        <ImSpinner9 className="animate-spin" size={70} />
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (!token) {
@@ -50,6 +57,7 @@ export const DashBoardPage = () => {
     }
   }, [token, navigate]);
 
+  // ----------Fetch Products
   const fetchProducts = useCallback(async () => {
     try {
       const response = await PrivateAxios.get("/products");
@@ -64,6 +72,7 @@ export const DashBoardPage = () => {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Fetch best selling products
   const fetchSellingData = useCallback(async () => {
     try {
       const response = await PrivateAxios.get("/sales/best-selling-item");
@@ -92,6 +101,7 @@ export const DashBoardPage = () => {
     return acc;
   }, {});
 
+  // Fetch Active Orders
   const fetchOrders = useCallback(async (controller) => {
     try {
       const response = await PrivateAxios.get("/orders/active-orders", {
@@ -107,17 +117,20 @@ export const DashBoardPage = () => {
 
   useEffect(() => {
     const controller = new AbortController();
+
     fetchOrders(controller);
     socket.on("placed-order", () => {
       playNotificationSound();
       fetchOrders(controller);
     });
+
     return () => {
       controller.abort();
       socket.off("placed-order");
     };
   }, [fetchOrders]);
 
+  // Fetch Sales
   useEffect(() => {
     const controller = new AbortController();
     const fetchSales = async () => {
@@ -134,6 +147,7 @@ export const DashBoardPage = () => {
     return () => controller.abort();
   }, []);
 
+  // Fetch category
   useEffect(() => {
     const controller = new AbortController();
     const fetchCategories = async () => {
@@ -150,6 +164,7 @@ export const DashBoardPage = () => {
     return () => controller.abort();
   }, []);
 
+  // Fetch Today orders
   useEffect(() => {
     const fetchTodayOrders = async () => {
       try {
@@ -187,78 +202,116 @@ export const DashBoardPage = () => {
   }, {});
 
   async function uploadCoverImage(e) {
-    e.preventDefault();
-
-    if (!coverUpdatedImage) {
-      toast.error("Please select an image before uploading.");
-      return;
-    }
-
     setLoading(true);
-    setUploadProgress(0);
+    e.preventDefault();
+    const Form = new FormData();
+    Form.append("image", coverUpdatedImage);
+    const response = await PrivateAxios.post("/auth/CoverImage", Form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-    const form = new FormData();
-    form.append("image", coverUpdatedImage);
-
-    try {
-      const response = await PrivateAxios.post("/auth/CoverImage", form, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          const percent = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(percent);
-        },
-      });
-
-      if (response.status === 200) {
-        setUploadProgress(100);
-        toast.success("Cover-Image updated successfully");
-
-        setTimeout(() => {
-          dispatch(
-            loginSuccess({
-              ...adminProfile,
-              user: {
-                ...adminProfile.user,
-                coverImage: response.data.content.coverImage,
-              },
-            })
-          );
-          resetModal();
-        }, 800);
-      }
-    } catch (error) {
-      toast.error("Upload failed");
-      console.error("Cover image upload error:", error);
-    } finally {
+    if (response.status === 200) {
+      toast.success("Cover-Image updated Successfully");
+      dispatch(
+        loginSuccess({
+          ...adminProfile,
+          user: {
+            ...adminProfile.user,
+            coverImage: response.data.content.coverImage,
+          },
+        })
+      );
       setLoading(false);
+      setCoverImageModel(false);
     }
-  }
-
-  function resetModal() {
-    setCoverImageModel(false);
-    setUpdatedCoverImage(null);
-    setUploadProgress(0);
   }
 
   function handleLogout() {
     dispatch(logout());
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <ImSpinner9 className="animate-spin" size={70} />
-      </div>
-    );
-  }
-
   return (
     <div className="min-w-[375px] h-auto relative">
-      <div className="w-[98%] justify-center items-center grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
+      {/* {adminProfile.user.coverImage ? (
+        <img
+          src={`${backendUrl}/${adminProfile.user.coverImage}`}
+          alt="logo"
+          className="w-full object-cover max-h-[250px]"
+        />
+      ) : (
+        <img
+          src="/assets/image1.jpg"
+          alt="logo"
+          className="w-full object-cover max-h-[250px]"
+        />
+      )}
+
+      <div className="absolute right-2 top-52">
+        <button
+          onClick={() => setCoverImageModel((prev) => !prev)}
+          className="bg-black text-white p-2 rounded-md hover:bg-gray-800 transition"
+        >
+          <Edit2Icon size={20} />
+        </button>
+      </div> */}
+
+      {coverImageModel && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center rounded-md">
+          <div
+            className="absolute inset-0 drop-shadow-2xl bg-opacity-30 backdrop-blur-sm"
+            onClick={() => setCoverImageModel(false)}
+          ></div>
+          <div className="absolute w-[600px] h-[300px] bg-white px-4 rounded-md">
+            <h1 className="text-center mt-5 text-xl font-semibold">
+              Update Cover Image
+            </h1>
+            <p className="text-center text-red-500 text-sm">
+              Cover image should be in jpeg Formet <hr /> After update cover
+              image login Required
+            </p>
+            <div className="flex justify-center items-center mx-auto ">
+              <input
+                type="file"
+                name="file"
+                id=""
+                onChange={(e) => setUpdatedCoverImage(e.target.files[0])}
+                className="border mt-5 p-2"
+              />
+            </div>
+            <button
+              className="mt-10 border p-2 w-full bg-amber-400"
+              onClick={uploadCoverImage}
+            >
+              Upload Image
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="absolute left-0 top-2">
+        {/* <button onClick={toggleMenu}>
+          <Menu size={40} color="gray" />
+        </button> */}
+        {showMenu && (
+          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-20 border">
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              onClick={() => navigate("/admin/settings")}
+            >
+              Settings
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-red-100 text-red-600"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="w-[98%] grid grid-cols-2 md:grid-cols-4 md:justify-center sm:gap-6 mt-5 mb-4 mx-auto relative">
         <StatCard
           name="Today Orders"
           value={todaysOrders}
@@ -285,6 +338,7 @@ export const DashBoardPage = () => {
           route="/admin/Category"
         />
       </div>
+
       <CardView
         products={grouped}
         hideAddToCard={true}
@@ -297,7 +351,8 @@ export const DashBoardPage = () => {
         cardCss="h-[261px]"
         css=" h-auto"
       />
-      <div className="sticky bottom-0 left-0 right-0">
+
+      <div className=" sticky bottom-0 left-0 right-0  ">
         <div className="min-w-[343px] lg:w-[98%] mx-auto flex flex-col">
           <Link
             to="/admin/createProduct"

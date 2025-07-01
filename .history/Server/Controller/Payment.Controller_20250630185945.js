@@ -39,21 +39,14 @@ export const createOrder = async (req, res) => {
         userId,
         packageId,
       },
-      handler: function (response) {
-        const startDate = new Date();
-        const endDate = new Date();
-        endDate.setDate(startDate.getDate() + pkg.durationInDays);
+      handler: async function (response) {
+        // 👇 Here is where you need to redirect manually with query params
+        const startDateISO = startDate.toISOString();
+        const endDateISO = endDate.toISOString();
 
-        // ✅ Add required query params to redirect
-        const redirectUrl =
-          `${window.location.origin}/payment-success` +
-          `?payment_id=${response.razorpay_payment_id}` +
-          `&order_id=${response.razorpay_order_id}` +
-          `&signature=${response.razorpay_signature}` +
-          `&packageId=${pkg._id}` +
-          `&userId=${userId}` +
-          `&startDate=${startDate.toISOString()}` +
-          `&endDate=${endDate.toISOString()}`;
+        const url = `${backendUrl}/payment-success?payment_id=${response.razorpay_payment_id}&order_id=${response.razorpay_order_id}&signature=${response.razorpay_signature}&packageId=${pkg._id}&startDate=${startDateISO}&endDate=${endDateISO}&userId=${userId}`;
+
+        window.location.href = url;
       },
     };
 
@@ -84,11 +77,12 @@ export const verifyPayment = async (req, res) => {
       endDate,
     } = req.body;
 
-    // Step 1: Check for missing fields
+    // Step 1: Identify missing fields
     const missingFields = [];
+
     if (!razorpay_order_id) missingFields.push("razorpay_order_id");
     if (!razorpay_payment_id) missingFields.push("razorpay_payment_id");
-    // if (!razorpay_signature) missingFields.push("razorpay_signature");
+    if (!razorpay_signature) missingFields.push("razorpay_signature");
     if (!userId) missingFields.push("userId");
     if (!packageId) missingFields.push("packageId");
     if (!startDate) missingFields.push("startDate");
@@ -97,7 +91,7 @@ export const verifyPayment = async (req, res) => {
     if (missingFields.length > 0) {
       return res.status(400).json({
         message: "Missing required fields",
-        missingFields,
+        missingFields, // clearly show what's missing
       });
     }
 
@@ -112,7 +106,7 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ message: "Invalid signature" });
     }
 
-    // Step 3: Save subscription
+    // Step 3: Save Subscription
     const newSubscription = new SubScription({
       adminId: userId,
       packageId,
@@ -123,8 +117,8 @@ export const verifyPayment = async (req, res) => {
 
     await newSubscription.save();
 
-    // Step 4: Update admin
-    const subscription = await Admin.findByIdAndUpdate(
+    // Step 4: Update Admin
+    const updatedAdmin = await Admin.findByIdAndUpdate(
       userId,
       {
         subscription: {
@@ -136,22 +130,10 @@ export const verifyPayment = async (req, res) => {
       { new: true }
     );
 
-    // ✅ Step 5: Redirect user to frontend payment-success page
-    const redirectUrl =
-      `http://localhost:5173/payment-success` +
-      `?payment_id=${razorpay_payment_id}` +
-      `&order_id=${razorpay_order_id}` +
-      `&signature=${razorpay_signature}` +
-      `&packageId=${packageId}` +
-      `&userId=${userId}` +
-      `&startDate=${startDate}` +
-      `&endDate=${endDate}`;
-
     return res.status(200).json({
-      subscription: newSubscription,
-      isSubscribe: new Date(newSubscription.endDate) > new Date(),
       message: "Payment verified and plan updated",
-      redirectUrl,
+      subscriptionId: newSubscription._id,
+      subscription: updatedAdmin.subscription,
     });
   } catch (error) {
     console.error("Payment verification error:", error);

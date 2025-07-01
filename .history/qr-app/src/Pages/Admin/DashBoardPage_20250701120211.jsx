@@ -28,7 +28,7 @@ export const DashBoardPage = () => {
   const [SelingData, setSellingData] = useState([]);
 
   const [coverImageModel, setCoverImageModel] = useState(false);
-  const [coverUpdatedImage, setUpdatedCoverImage] = useState(null); // ✅ FIXED
+  const [coverUpdatedImage, setUpdatedCoverImage] = useState(true);
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,11 +37,20 @@ export const DashBoardPage = () => {
   const token = useSelector((state) => state.auth.token);
   const adminProfile = useSelector((state) => state.auth);
   const [uploadProgress, setUploadProgress] = useState(0);
-  console.log(uploadProgress);
+  console.log(adminProfile);
+
   const backendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center">
+        <ImSpinner9 className="animate-spin" size={70} />
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (!token) {
@@ -50,6 +59,7 @@ export const DashBoardPage = () => {
     }
   }, [token, navigate]);
 
+  // ----------Fetch Products
   const fetchProducts = useCallback(async () => {
     try {
       const response = await PrivateAxios.get("/products");
@@ -64,6 +74,7 @@ export const DashBoardPage = () => {
     fetchProducts();
   }, [fetchProducts]);
 
+  // Fetch best selling products
   const fetchSellingData = useCallback(async () => {
     try {
       const response = await PrivateAxios.get("/sales/best-selling-item");
@@ -92,6 +103,7 @@ export const DashBoardPage = () => {
     return acc;
   }, {});
 
+  // Fetch Active Orders
   const fetchOrders = useCallback(async (controller) => {
     try {
       const response = await PrivateAxios.get("/orders/active-orders", {
@@ -107,17 +119,20 @@ export const DashBoardPage = () => {
 
   useEffect(() => {
     const controller = new AbortController();
+
     fetchOrders(controller);
     socket.on("placed-order", () => {
       playNotificationSound();
       fetchOrders(controller);
     });
+
     return () => {
       controller.abort();
       socket.off("placed-order");
     };
   }, [fetchOrders]);
 
+  // Fetch Sales
   useEffect(() => {
     const controller = new AbortController();
     const fetchSales = async () => {
@@ -134,6 +149,7 @@ export const DashBoardPage = () => {
     return () => controller.abort();
   }, []);
 
+  // Fetch category
   useEffect(() => {
     const controller = new AbortController();
     const fetchCategories = async () => {
@@ -150,6 +166,7 @@ export const DashBoardPage = () => {
     return () => controller.abort();
   }, []);
 
+  // Fetch Today orders
   useEffect(() => {
     const fetchTodayOrders = async () => {
       try {
@@ -228,7 +245,7 @@ export const DashBoardPage = () => {
             })
           );
           resetModal();
-        }, 800);
+        }, 800); // slight delay for better UX
       }
     } catch (error) {
       toast.error("Upload failed");
@@ -249,16 +266,113 @@ export const DashBoardPage = () => {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <ImSpinner9 className="animate-spin" size={70} />
-      </div>
-    );
+    <div className="flex justify-center items-center">
+      <ImSpinner9 className="animate-spin" size={70} />
+    </div>;
   }
 
   return (
     <div className="min-w-[375px] h-auto relative">
-      <div className="w-[98%] justify-center items-center grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
+      {/* {adminProfile.user.coverImage ? (
+        <img
+          src={`${backendUrl}/${adminProfile.user.coverImage}`}
+          alt="logo"
+          className="w-full object-cover max-h-[250px]"
+        />
+      ) : (
+        <img
+          src="/assets/image1.jpg"
+          alt="logo"
+          className="w-full object-cover max-h-[250px]"
+        />
+      )}
+
+      <div className="absolute right-2 top-52">
+        <button
+          onClick={() => setCoverImageModel((prev) => !prev)}
+          className="bg-black text-white p-2 rounded-md hover:bg-gray-800 transition"
+        >
+          <Edit2Icon size={20} />
+        </button>
+      </div> */}
+
+      {coverImageModel && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center rounded-md">
+          <div
+            className="absolute inset-0 drop-shadow-2xl bg-opacity-30 backdrop-blur-sm"
+            onClick={() => setCoverImageModel(false)}
+          ></div>
+
+          <div className="absolute w-[600px] h-auto bg-white px-6 py-4 rounded-md shadow-lg">
+            <h1 className="text-center text-xl font-semibold mb-2">
+              Update Cover Image
+            </h1>
+            <p className="text-center text-red-500 text-sm mb-4">
+              Cover image should be in JPEG format. <br />
+              You will need to log in again after updating.
+            </p>
+
+            <div className="flex justify-center items-center">
+              <input
+                type="file"
+                accept="image/jpeg"
+                onChange={(e) => setUpdatedCoverImage(e.target.files[0])}
+                className="border px-3 py-2 w-full rounded"
+              />
+            </div>
+
+            {loading && (
+              <div className="w-full mt-4">
+                <div className="bg-gray-300 h-3 rounded">
+                  <div
+                    className="bg-blue-600 h-3 rounded transition-all"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-700 mt-1 text-center">
+                  Uploading: {uploadProgress}%
+                </p>
+              </div>
+            )}
+
+            <button
+              disabled={loading}
+              onClick={uploadCoverImage}
+              className={`mt-6 w-full py-2 rounded text-white font-medium ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-amber-500 hover:bg-amber-600"
+              }`}
+            >
+              {loading ? "Uploading..." : "Upload Image"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="absolute left-0 top-2">
+        {/* <button onClick={toggleMenu}>
+          <Menu size={40} color="gray" />
+        </button> */}
+        {showMenu && (
+          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-20 border">
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              onClick={() => navigate("/admin/settings")}
+            >
+              Settings
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-red-100 text-red-600"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="w-[98%] grid grid-cols-2 md:grid-cols-4 md:justify-center sm:gap-6 mt-5 mb-4 mx-auto relative">
         <StatCard
           name="Today Orders"
           value={todaysOrders}
@@ -285,6 +399,7 @@ export const DashBoardPage = () => {
           route="/admin/Category"
         />
       </div>
+
       <CardView
         products={grouped}
         hideAddToCard={true}
@@ -297,7 +412,8 @@ export const DashBoardPage = () => {
         cardCss="h-[261px]"
         css=" h-auto"
       />
-      <div className="sticky bottom-0 left-0 right-0">
+
+      <div className=" sticky bottom-0 left-0 right-0  ">
         <div className="min-w-[343px] lg:w-[98%] mx-auto flex flex-col">
           <Link
             to="/admin/createProduct"

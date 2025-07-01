@@ -12,6 +12,7 @@ export const Package = () => {
   const [loading, setLoading] = useState(true);
   const user = useSelector((state) => state.auth.user);
   const userId = user._id;
+  const adminId = user._id;
   const navigate = useNavigate(); // ✅ Hook at the top level of component
 
   const backendUrl =
@@ -63,19 +64,15 @@ export const Package = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount,
         currency,
-        name: user.name,
+        name: "Your App Name",
         description: pkg.title,
         order_id: orderId,
-        // redirectUrl:
-        //   `/payment-success` +
-        //   `?payment_id=${response.razorpay_payment_id}` +
-        //   `&order_id=${response.razorpay_order_id}` +
-        //   `&signature=${response.razorpay_signature}` +
-        //   `&packageId=${packageId}` +
-        //   `&userId=${userId}` +
-        //   `&startDate=${startDate}` +
-        //   `&endDate=${endDate}`,
+        callback_url: `${backendUrl}/api/payment/payment-success?packageId=${
+          pkg._id
+        }&userId=${userId}&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`,
+
         handler: async function (response) {
+          // Step 3: Send payment verification data to backend
           try {
             const verifyRes = await axios.post(
               `${backendUrl}/api/payment/verify-payment`,
@@ -93,7 +90,8 @@ export const Package = () => {
             if (
               verifyRes.data.message === "Payment verified and plan updated"
             ) {
-              window.location.href = verifyRes.data.redirectUrl;
+              toast.success("✅ Payment Successful");
+              navigate("/payment-success");
             } else {
               toast.error("❌ Payment verification failed");
             }
@@ -102,7 +100,6 @@ export const Package = () => {
             toast.error("❌ Verification error");
           }
         },
-
         prefill: {
           name: user.name,
           email: user.email,

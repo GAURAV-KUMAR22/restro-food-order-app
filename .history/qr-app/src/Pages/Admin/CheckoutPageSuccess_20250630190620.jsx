@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import PrivateAxios from "../../Services/PrivateAxios";
 import { CheckCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../Redux/Fetures/authSlice";
 
-// ✅ Your backend URL
-const backendUrl = "http://localhost:5000";
-
 export const CheckoutPageSuccess = () => {
-  const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const [paymentDetails, setPaymentDetails] = useState(null);
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
 
   const paymentId = searchParams.get("payment_id");
   const orderId = searchParams.get("order_id");
@@ -37,7 +28,6 @@ export const CheckoutPageSuccess = () => {
         !endDate
       ) {
         console.error("Missing Razorpay payment details");
-        setLoading(false);
         return;
       }
 
@@ -55,8 +45,6 @@ export const CheckoutPageSuccess = () => {
           }
         );
 
-        console.log(data);
-        // ✅ Update Redux store
         const isSubscribed =
           new Date(data.subscription?.expiresAt) > new Date();
 
@@ -64,23 +52,11 @@ export const CheckoutPageSuccess = () => {
           loginSuccess({
             ...auth,
             subscription: data.subscription,
-            isSubscribed: data.isSubscribe,
+            isSubscribed,
           })
         );
 
-        setPaymentDetails({
-          session: {
-            metadata: {
-              packageTitle: "Your Package Title",
-              startDate,
-              endDate,
-            },
-            amount_total: data.amount || 0,
-          },
-          customer: {
-            email: auth?.user?.email || "user@example.com",
-          },
-        });
+        navigate("/payment-receipt-success");
       } catch (err) {
         console.error("Error verifying payment:", err);
       } finally {

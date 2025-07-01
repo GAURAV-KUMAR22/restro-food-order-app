@@ -120,7 +120,7 @@ const DashboardLayout = () => {
               Update Cover Image
             </h1>
             <p className="text-sm text-center text-red-500 mb-4">
-              Only JPEG / Png / WEBP format is allowed.
+              Only JPEG format is allowed. You must re-login after update.
             </p>
             <form
               onSubmit={uploadCoverImage}
@@ -131,18 +131,8 @@ const DashboardLayout = () => {
                 accept="image/jpeg"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  if (
-                    file &&
-                    ![
-                      "image/jpeg",
-                      "image/png",
-                      "image/webp",
-                      "image/jpg",
-                    ].includes(file.type)
-                  ) {
-                    toast.error(
-                      "Only JPEG, PNG, JPG, or WEBP files are allowed."
-                    );
+                  if (file && file.type !== "image/jpeg") {
+                    toast.error("Only JPEG files are allowed.");
                     return;
                   }
                   setUpdatedCoverImage(file);

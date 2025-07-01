@@ -55,7 +55,6 @@ export const CheckoutPageSuccess = () => {
           }
         );
 
-        console.log(data);
         // ✅ Update Redux store
         const isSubscribed =
           new Date(data.subscription?.expiresAt) > new Date();
@@ -64,7 +63,7 @@ export const CheckoutPageSuccess = () => {
           loginSuccess({
             ...auth,
             subscription: data.subscription,
-            isSubscribed: data.isSubscribe,
+            isSubscribed,
           })
         );
 
