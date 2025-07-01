@@ -258,7 +258,116 @@ export const DashBoardPage = () => {
 
   return (
     <div className="min-w-[375px] h-auto relative">
-      <div className="w-[98%] justify-center items-center grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
+      ✅ Cover Image Section
+      {/* {adminProfile.user.coverImage ? (
+        <img
+          src={`${backendUrl}/${adminProfile.user.coverImage}`}
+          alt="cover"
+          className="w-full object-cover max-h-[250px]"
+        />
+      ) : (
+        <img
+          src="/assets/image1.jpg"
+          alt="default-cover"
+          className="w-full object-cover max-h-[250px]"
+        />
+      )}
+      <div className="absolute right-2 top-52">
+        <button
+          onClick={() => setCoverImageModel(true)}
+          className="bg-black text-white p-2 rounded-md hover:bg-gray-800 transition"
+        >
+          <Edit2Icon size={20} />
+        </button>
+      </div> */}
+      {/* ✅ Cover Image Modal */}
+      {/* {coverImageModel && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center rounded-md">
+          <div
+            className="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm"
+            onClick={resetModal}
+          ></div>
+
+          <div className="relative z-10 w-[600px] h-auto bg-white px-6 py-5 rounded-md shadow-lg">
+            <h1 className="text-center text-xl font-semibold mb-2">
+              Update Cover Image
+            </h1>
+            <p className="text-center text-red-500 text-sm mb-4">
+              Only JPEG format is allowed.
+              <br />
+              You'll need to log in again after updating.
+            </p>
+
+            <div className="flex flex-col items-center gap-2">
+              <input
+                type="file"
+                accept="image/jpeg"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file && file.type !== "image/jpeg") {
+                    toast.error("Only JPEG files are allowed");
+                    return;
+                  }
+                  setUpdatedCoverImage(file);
+                }}
+                className="border px-3 py-2 w-full rounded"
+              />
+              {coverUpdatedImage && (
+                <img
+                  src={URL.createObjectURL(coverUpdatedImage)}
+                  alt="preview"
+                  className="mt-2 max-h-[120px] rounded border"
+                />
+              )}
+            </div>
+
+            {loading && (
+              <div className="w-full mt-4">
+                <div className="bg-gray-300 h-3 rounded">
+                  <div
+                    className="bg-blue-600 h-3 rounded transition-all"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-700 mt-1 text-center">
+                  Uploading: {uploadProgress}%
+                </p>
+              </div>
+            )}
+
+            <button
+              disabled={loading || !coverUpdatedImage}
+              onClick={uploadCoverImage}
+              className={`mt-6 w-full py-2 rounded text-white font-medium ${
+                loading || !coverUpdatedImage
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-amber-500 hover:bg-amber-600"
+              }`}
+            >
+              {loading ? "Uploading..." : "Upload Image"}
+            </button>
+          </div>
+        </div>
+      )} */}
+      {/* <div className="absolute left-0 top-2">
+        {showMenu && (
+          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-20 border">
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              onClick={() => navigate("/admin/settings")}
+            >
+              Settings
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-red-100 text-red-600"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div> */}
+      <div className="w-[98%] grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
         <StatCard
           name="Today Orders"
           value={todaysOrders}

@@ -120,7 +120,7 @@ const DashboardLayout = () => {
               Update Cover Image
             </h1>
             <p className="text-sm text-center text-red-500 mb-4">
-              Only JPEG / Png / WEBP format is allowed.
+              Only JPEG format is allowed. You must re-login after update.
             </p>
             <form
               onSubmit={uploadCoverImage}

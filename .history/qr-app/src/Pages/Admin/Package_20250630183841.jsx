@@ -9,19 +9,21 @@ import { useNavigate } from "react-router-dom";
 
 export const Package = () => {
   const [packageItems, setPackageItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const user = useSelector((state) => state.auth.user);
-  const userId = user._id;
-  const navigate = useNavigate(); // ✅ Hook at the top level of component
+  const [loading, setLoading] = useState(true); // Loading state
+  const userId = useSelector((state) => state.auth.user._id);
+  const adminId = useSelector((state) => state.auth.user._id);
 
   const backendUrl =
     import.meta.env.VITE_MODE === "Production"
       ? import.meta.env.VITE_BACKEND_PROD
       : import.meta.env.VITE_BACKEND_DEV;
 
+  // ✅ Fetch packages
   const handleFetchData = useCallback(async () => {
     try {
       const response = await PrivateAxios.get("/subscription/package");
+      if (response) {
+      }
       if (response.status === 200) {
         setPackageItems(response.data.content);
       } else {
@@ -30,7 +32,7 @@ export const Package = () => {
     } catch (error) {
       toast.error("An error occurred while fetching packages");
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading to false after fetching
     }
   }, []);
 
@@ -38,52 +40,51 @@ export const Package = () => {
     handleFetchData();
   }, [handleFetchData]);
 
-  const handleCheckout = async (pkg) => {
+  // ✅ Razorpay Checkout Handler
+
+  const handleCheckout = async ({pkg, user, adminId}) => {
+    const navigate = useNavigate(); // If inside component
+
     try {
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(startDate.getDate() + pkg.durationInDays);
 
-      // Step 1: Create Razorpay order from your backend
-      const orderRes = await axios.post(
+      // Step 1: Create Razorpay Order from backend
+      const { data: orderData } = await axios.post(
         `${backendUrl}/api/payment/create-order`,
         {
-          amount: pkg.price,
-          userId,
+          amount: pkg.offerPrice || pkg.price,
+          packageTitle: pkg.title,
           packageId: pkg._id,
-          startDate,
-          endDate,
+          userId: user._id,
+          adminId,
+          durationInDays: pkg.durationInDays,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
         }
       );
 
-      const { orderId, amount, currency } = orderRes.data;
+      const { id: order_id, amount, currency } = orderData;
 
-      // Step 2: Razorpay options
+      // Step 2: Open Razorpay Checkout
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount,
         currency,
-        name: user.name,
+        name: "Your App Name",
         description: pkg.title,
-        order_id: orderId,
-        // redirectUrl:
-        //   `/payment-success` +
-        //   `?payment_id=${response.razorpay_payment_id}` +
-        //   `&order_id=${response.razorpay_order_id}` +
-        //   `&signature=${response.razorpay_signature}` +
-        //   `&packageId=${packageId}` +
-        //   `&userId=${userId}` +
-        //   `&startDate=${startDate}` +
-        //   `&endDate=${endDate}`,
+        order_id,
         handler: async function (response) {
           try {
+            // Step 3: Verify payment on backend
             const verifyRes = await axios.post(
               `${backendUrl}/api/payment/verify-payment`,
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                userId,
+                userId: userId,
                 packageId: pkg._id,
                 startDate: startDate.toISOString(),
                 endDate: endDate.toISOString(),
@@ -93,29 +94,29 @@ export const Package = () => {
             if (
               verifyRes.data.message === "Payment verified and plan updated"
             ) {
-              window.location.href = verifyRes.data.redirectUrl;
+              toast.success("✅ Payment Successful");
+              navigate("/payment-success");
             } else {
               toast.error("❌ Payment verification failed");
             }
-          } catch (err) {
-            console.error("Payment verification error:", err);
+          } catch (error) {
+            console.error("Payment verification error:", error);
             toast.error("❌ Verification error");
           }
         },
-
         prefill: {
-          name: user.name,
-          email: user.email,
+          name: user.name || "User",
+          email: user.email || "user@example.com",
         },
         theme: {
           color: "#007BFF",
         },
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
 
-      rzp.on("payment.failed", function () {
+      razorpay.on("payment.failed", function () {
         toast.error("❌ Payment failed or cancelled");
       });
     } catch (error) {
@@ -123,7 +124,6 @@ export const Package = () => {
       toast.error("❌ Failed to initiate payment");
     }
   };
-
   if (loading) {
     return <div className="text-center">Loading packages...</div>; // Loading state
   }

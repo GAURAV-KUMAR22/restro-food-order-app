@@ -1,0 +1,88 @@
+import React, { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { FaRupeeSign } from "react-icons/fa";
+import publicAxios from "../../Services/PublicAxios";
+import PrivateAxios from "../../Services/PrivateAxios";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+export const Package = () => {
+ 
+  if (loading) {
+    return <div className="text-center">Loading packages...</div>; // Loading state
+  }
+
+  return (
+    <div className="h-full mt-10 px-4 sm:px-10">
+      <h1 className="text-2xl font-bold text-center">Pick the Best Plan</h1>
+      <p className="text-center text-sm">
+        Choose your desired plan to get access to our premium content
+      </p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-10 justify-items-center ">
+        {packageItems.map((item, index) => {
+          const centerIndex = Math.floor(packageItems.length / 2);
+
+          let rotateX = 0;
+          let translateY = 0;
+
+          if (index < centerIndex) {
+            rotateX = 15;
+            translateY = 10;
+          } else if (index > centerIndex) {
+            rotateX = -15;
+            translateY = 10;
+          }
+
+          return (
+            <div
+              key={index}
+              className="w-[300px] h-[500px] bg-blue-100 shadow-xl p-6 rounded-xl transition-transform duration-500 hover:scale-105 flex flex-col justify-between items-center"
+              style={{
+                transform: `rotateX(${rotateX}deg) translateY(${translateY}px)`,
+                transformStyle: "preserve-3d",
+              }}
+            >
+              <h2 className="text-2xl font-bold text-center">{item.title}</h2>
+
+              <div className="flex flex-col items-center mt-4">
+                <p className="flex items-center gap-1 text-4xl font-bold text-blue-700">
+                  <FaRupeeSign /> {item.offerPrice || item.price}
+                </p>
+                {item.offerPrice && (
+                  <p className="text-sm text-gray-500 line-through">
+                    ₹{item.price}
+                  </p>
+                )}
+              </div>
+
+              <p className="text-sm font-medium text-gray-700 mt-2">
+                Duration:{" "}
+                <span className="font-bold text-black">
+                  {item.durationInDays} days
+                </span>
+              </p>
+
+              <ul className="mt-6 text-sm font-semibold space-y-2 text-left w-full">
+                {item.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-green-600">✅</span>
+                    <span className="capitalize">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <button
+                onClick={() => handleCheckout(item)}
+                className="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Select Plan
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

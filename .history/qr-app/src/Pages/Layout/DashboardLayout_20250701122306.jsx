@@ -3,8 +3,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { Menu, Edit2Icon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, loginSuccess } from "../../Redux/Fetures/authSlice";
+import PrivateAxios from "../../utils/axios"; // ✅ Adjust path if needed
 import toast from "react-hot-toast";
-import PrivateAxios from "../../Services/PrivateAxios";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -120,7 +120,7 @@ const DashboardLayout = () => {
               Update Cover Image
             </h1>
             <p className="text-sm text-center text-red-500 mb-4">
-              Only JPEG / Png / WEBP format is allowed.
+              Only JPEG format is allowed. You must re-login after update.
             </p>
             <form
               onSubmit={uploadCoverImage}
@@ -131,18 +131,8 @@ const DashboardLayout = () => {
                 accept="image/jpeg"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  if (
-                    file &&
-                    ![
-                      "image/jpeg",
-                      "image/png",
-                      "image/webp",
-                      "image/jpg",
-                    ].includes(file.type)
-                  ) {
-                    toast.error(
-                      "Only JPEG, PNG, JPG, or WEBP files are allowed."
-                    );
+                  if (file && file.type !== "image/jpeg") {
+                    toast.error("Only JPEG files are allowed.");
                     return;
                   }
                   setUpdatedCoverImage(file);
@@ -184,25 +174,25 @@ const DashboardLayout = () => {
           <Menu size={40} color="gray" />
         </button>
         {showMenu && (
-          <div className="absolute mt-2 bg-white shadow-xl rounded-lg w-40 border border-gray-200 z-30 animate-fade-in">
+          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-24 border z-20">
             <button
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
               onClick={() => navigate("/admin/settings")}
             >
-              ⚙️ Settings
+              Settings
             </button>
             <button
-              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100 transition"
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-red-100 text-red-600"
               onClick={handleLogout}
             >
-              🚪 Logout
+              Logout
             </button>
           </div>
         )}
       </div>
 
       {/* ✅ Main Content */}
-      <div className="">
+      <div className="mt-5 px-4 pb-10">
         <Outlet />
       </div>
     </div>

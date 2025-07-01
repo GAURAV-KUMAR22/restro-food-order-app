@@ -124,7 +124,7 @@ export const verifyPayment = async (req, res) => {
     await newSubscription.save();
 
     // Step 4: Update admin
-    const subscription = await Admin.findByIdAndUpdate(
+    await Admin.findByIdAndUpdate(
       userId,
       {
         subscription: {
@@ -148,8 +148,6 @@ export const verifyPayment = async (req, res) => {
       `&endDate=${endDate}`;
 
     return res.status(200).json({
-      subscription: newSubscription,
-      isSubscribe: new Date(newSubscription.endDate) > new Date(),
       message: "Payment verified and plan updated",
       redirectUrl,
     });

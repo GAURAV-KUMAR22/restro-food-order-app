@@ -1,95 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import PrivateAxios from "../../Services/PrivateAxios";
 import { CheckCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../Redux/Fetures/authSlice";
 
-// ✅ Your backend URL
-const backendUrl = "http://localhost:5000";
-
 export const CheckoutPageSuccess = () => {
-  const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const [loading, setLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState(null);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
 
-  const paymentId = searchParams.get("payment_id");
-  const orderId = searchParams.get("order_id");
-  const signature = searchParams.get("signature");
-  const packageId = searchParams.get("packageId");
-  const userId = searchParams.get("userId");
-  const startDate = searchParams.get("startDate");
-  const endDate = searchParams.get("endDate");
+  const sessionId = searchParams.get("session_id");
+
+  console.log(sessionId);
 
   useEffect(() => {
-    const verifyPayment = async () => {
-      if (
-        !paymentId ||
-        !orderId ||
-        !signature ||
-        !packageId ||
-        !userId ||
-        !startDate ||
-        !endDate
-      ) {
-        console.error("Missing Razorpay payment details");
-        setLoading(false);
-        return;
-      }
-
+    const fetchSuccess = async () => {
       try {
-        const { data } = await axios.post(
-          `${backendUrl}/api/payment/verify-payment`,
+        const response = await PrivateAxios.get(
+          "/payment/verify-checkout-session",
           {
-            razorpay_payment_id: paymentId,
-            razorpay_order_id: orderId,
-            razorpay_signature: signature,
-            packageId,
-            userId,
-            startDate,
-            endDate,
+            params: { session_id: sessionId },
           }
         );
 
-        console.log(data);
-        // ✅ Update Redux store
-        const isSubscribed =
-          new Date(data.subscription?.expiresAt) > new Date();
+        console.log("Payment verification response:", response);
 
         dispatch(
           loginSuccess({
             ...auth,
-            subscription: data.subscription,
-            isSubscribed: data.isSubscribe,
+            subscription: response.data.subscription,
+            isSubscribed:
+              response.data.subscription?.expiresAt &&
+              new Date(response.data.subscription.expiresAt) > new Date(),
           })
         );
 
-        setPaymentDetails({
-          session: {
-            metadata: {
-              packageTitle: "Your Package Title",
-              startDate,
-              endDate,
-            },
-            amount_total: data.amount || 0,
-          },
-          customer: {
-            email: auth?.user?.email || "user@example.com",
-          },
-        });
-      } catch (err) {
-        console.error("Error verifying payment:", err);
+        setPaymentDetails(response.data);
+      } catch (error) {
+        console.error("Error verifying payment:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    verifyPayment();
-  }, []);
+    if (sessionId) fetchSuccess();
+  }, [sessionId]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-green-50 px-4">
@@ -135,7 +94,7 @@ export const CheckoutPageSuccess = () => {
           )}
 
           <button
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate("/dashboard")}
             className="mt-8 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
           >
             Go to Dashboard

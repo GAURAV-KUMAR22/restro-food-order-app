@@ -27,19 +27,19 @@ export const CheckoutPageSuccess = () => {
 
   useEffect(() => {
     const verifyPayment = async () => {
-      if (
-        !paymentId ||
-        !orderId ||
-        !signature ||
-        !packageId ||
-        !userId ||
-        !startDate ||
-        !endDate
-      ) {
-        console.error("Missing Razorpay payment details");
-        setLoading(false);
-        return;
-      }
+      // if (
+      //   !paymentId ||
+      //   !orderId ||
+      //   !signature ||
+      //   !packageId ||
+      //   !userId ||
+      //   !startDate ||
+      //   !endDate
+      // ) {
+      //   console.error("Missing Razorpay payment details");
+      //   setLoading(false);
+      //   return;
+      // }
 
       try {
         const { data } = await axios.post(
@@ -55,7 +55,6 @@ export const CheckoutPageSuccess = () => {
           }
         );
 
-        console.log(data);
         // ✅ Update Redux store
         const isSubscribed =
           new Date(data.subscription?.expiresAt) > new Date();
@@ -64,7 +63,7 @@ export const CheckoutPageSuccess = () => {
           loginSuccess({
             ...auth,
             subscription: data.subscription,
-            isSubscribed: data.isSubscribe,
+            isSubscribed,
           })
         );
 

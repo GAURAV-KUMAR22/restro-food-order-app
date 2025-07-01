@@ -12,6 +12,7 @@ export const Package = () => {
   const [loading, setLoading] = useState(true);
   const user = useSelector((state) => state.auth.user);
   const userId = user._id;
+  const adminId = user._id;
   const navigate = useNavigate(); // ✅ Hook at the top level of component
 
   const backendUrl =
@@ -63,18 +64,18 @@ export const Package = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount,
         currency,
-        name: user.name,
+        name: "Your App Name",
         description: pkg.title,
         order_id: orderId,
-        // redirectUrl:
-        //   `/payment-success` +
-        //   `?payment_id=${response.razorpay_payment_id}` +
-        //   `&order_id=${response.razorpay_order_id}` +
-        //   `&signature=${response.razorpay_signature}` +
-        //   `&packageId=${packageId}` +
-        //   `&userId=${userId}` +
-        //   `&startDate=${startDate}` +
-        //   `&endDate=${endDate}`,
+        redirectUrl:
+          `/payment-success` +
+          `?payment_id=${response.razorpay_payment_id}` +
+          `&order_id=${response.razorpay_order_id}` +
+          `&signature=${response.razorpay_signature}` +
+          `&packageId=${packageId}` +
+          `&userId=${userId}` +
+          `&startDate=${startDate}` +
+          `&endDate=${endDate}`,
         handler: async function (response) {
           try {
             const verifyRes = await axios.post(

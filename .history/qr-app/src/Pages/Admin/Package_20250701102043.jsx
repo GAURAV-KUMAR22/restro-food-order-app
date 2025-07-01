@@ -66,15 +66,15 @@ export const Package = () => {
         name: user.name,
         description: pkg.title,
         order_id: orderId,
-        // redirectUrl:
-        //   `/payment-success` +
-        //   `?payment_id=${response.razorpay_payment_id}` +
-        //   `&order_id=${response.razorpay_order_id}` +
-        //   `&signature=${response.razorpay_signature}` +
-        //   `&packageId=${packageId}` +
-        //   `&userId=${userId}` +
-        //   `&startDate=${startDate}` +
-        //   `&endDate=${endDate}`,
+        redirectUrl:
+          `/payment-success` +
+          `?payment_id=${response.razorpay_payment_id}` +
+          `&order_id=${response.razorpay_order_id}` +
+          `&signature=${response.razorpay_signature}` +
+          `&packageId=${packageId}` +
+          `&userId=${userId}` +
+          `&startDate=${startDate}` +
+          `&endDate=${endDate}`,
         handler: async function (response) {
           try {
             const verifyRes = await axios.post(

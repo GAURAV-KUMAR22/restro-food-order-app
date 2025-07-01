@@ -148,8 +148,8 @@ export const verifyPayment = async (req, res) => {
       `&endDate=${endDate}`;
 
     return res.status(200).json({
-      subscription: newSubscription,
-      isSubscribe: new Date(newSubscription.endDate) > new Date(),
+      subscription: subscription,
+      isSubscribe: new Date(subscription.expiresAt) > new Date(),
       message: "Payment verified and plan updated",
       redirectUrl,
     });

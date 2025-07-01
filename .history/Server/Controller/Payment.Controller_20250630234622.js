@@ -88,7 +88,7 @@ export const verifyPayment = async (req, res) => {
     const missingFields = [];
     if (!razorpay_order_id) missingFields.push("razorpay_order_id");
     if (!razorpay_payment_id) missingFields.push("razorpay_payment_id");
-    // if (!razorpay_signature) missingFields.push("razorpay_signature");
+    if (!razorpay_signature) missingFields.push("razorpay_signature");
     if (!userId) missingFields.push("userId");
     if (!packageId) missingFields.push("packageId");
     if (!startDate) missingFields.push("startDate");
@@ -124,7 +124,7 @@ export const verifyPayment = async (req, res) => {
     await newSubscription.save();
 
     // Step 4: Update admin
-    const subscription = await Admin.findByIdAndUpdate(
+    await Admin.findByIdAndUpdate(
       userId,
       {
         subscription: {
@@ -141,18 +141,12 @@ export const verifyPayment = async (req, res) => {
       `http://localhost:5173/payment-success` +
       `?payment_id=${razorpay_payment_id}` +
       `&order_id=${razorpay_order_id}` +
-      `&signature=${razorpay_signature}` +
       `&packageId=${packageId}` +
       `&userId=${userId}` +
       `&startDate=${startDate}` +
       `&endDate=${endDate}`;
 
-    return res.status(200).json({
-      subscription: newSubscription,
-      isSubscribe: new Date(newSubscription.endDate) > new Date(),
-      message: "Payment verified and plan updated",
-      redirectUrl,
-    });
+    return res.redirect(302, redirectUrl);
   } catch (error) {
     console.error("Payment verification error:", error);
     return res.status(500).json({ message: "Internal server error" });

@@ -258,7 +258,26 @@ export const DashBoardPage = () => {
 
   return (
     <div className="min-w-[375px] h-auto relative">
-      <div className="w-[98%] justify-center items-center grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
+      <div className="absolute left-0 top-2">
+        {showMenu && (
+          <div className="mt-2 bg-white shadow-lg rounded-md py-2 w-20 border">
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+              onClick={() => navigate("/admin/settings")}
+            >
+              Settings
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-red-100 text-red-600"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="w-[98%] grid grid-cols-2 md:grid-cols-4 sm:gap-6 mt-5 mb-4 mx-auto">
         <StatCard
           name="Today Orders"
           value={todaysOrders}
@@ -285,6 +304,7 @@ export const DashBoardPage = () => {
           route="/admin/Category"
         />
       </div>
+
       <CardView
         products={grouped}
         hideAddToCard={true}
@@ -297,6 +317,7 @@ export const DashBoardPage = () => {
         cardCss="h-[261px]"
         css=" h-auto"
       />
+
       <div className="sticky bottom-0 left-0 right-0">
         <div className="min-w-[343px] lg:w-[98%] mx-auto flex flex-col">
           <Link
