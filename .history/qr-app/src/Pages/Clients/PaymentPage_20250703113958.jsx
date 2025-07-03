@@ -24,10 +24,7 @@ export const PaymentPage = () => {
   const navigate = useNavigate();
   const { shopId } = useParams();
 
-  const backendUrl =
-    import.meta.env.VITE_MODE === "Production"
-      ? import.meta.env.VITE_BACKEND_PROD
-      : import.meta.env.VITE_BACKEND_DEV;
+const BackendUrl = import.meta.env.VITE
 
   useEffect(() => {
     dispatch(syncCartFromLocalStorage());
@@ -170,7 +167,7 @@ export const PaymentPage = () => {
     try {
       // Step 1: Create Razorpay order (without placing real order yet)
       const { data } = await axios.post(
-        `${backendUrl}/api/payment/create-order-client`,
+        "http://localhost:5000/api/payment/create-order-client",
         {
           userId: userId,
           amount: totalPrice, // Actual price in paise
@@ -189,7 +186,7 @@ export const PaymentPage = () => {
           try {
             // Step 2: Verify payment
             const verifyRes = await axios.post(
-              `${backendUrl}/api/payment/verify-payment-client`,
+              "http://localhost:5000/api/payment/verify-payment-client",
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
